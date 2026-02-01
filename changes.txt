@@ -1,0 +1,5 @@
+manager should be able to upload just the after photos before photos are just to be uploaded by either ceo or user 
+revamp the ui of the upload page check all the pages in general 
+highlight the due date 
+task sequence according to the nearest due date 
+ping option for ceo to remind manually 

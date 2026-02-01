@@ -1,0 +1,33 @@
+{
+  "name": "zone-photo-tracker",
+  "version": "2.0.0",
+  "description": "Industrial zone before/after photo tracking system with visual reporting",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^17.2.3",
+    "framer-motion": "^12.29.2",
+    "html2canvas": "^1.4.1",
+    "jimp": "^1.6.0",
+    "jspdf": "^2.5.1",
+    "lucide-react": "^0.563.0",
+    "moment": "^2.29.4",
+    "mongodb": "^6.0.0",
+    "multer": "^1.4.5-lts.1",
+    "next": "^14.0.0",
+    "next-auth": "^4.24.13",
+    "nodemailer": "^7.0.13",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.0.0",
+    "eslint-config-next": "^14.0.0"
+  }
+}
