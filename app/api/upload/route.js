@@ -4,7 +4,7 @@ import { writeFile, mkdir } from 'fs/promises'
 import path from 'path'
 import { v4 as uuidv4 } from 'uuid'
 import { Jimp, loadFont } from 'jimp'
-import { FONT_SANS_32_WHITE } from 'jimp/fonts'
+import { SANS_32_WHITE } from 'jimp/fonts'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '../auth/[...nextauth]/route'
 import { put } from '@vercel/blob'
@@ -21,7 +21,7 @@ const uri = process.env.MONGODB_URI
 async function addWatermark(buffer, text) {
   try {
     const image = await Jimp.read(buffer)
-    const font = await loadFont(FONT_SANS_32_WHITE)
+    const font = await loadFont(SANS_32_WHITE)
     
     image.print({
       font,
