@@ -3,9 +3,9 @@
 ## Frontend
 - **Framework:** Next.js 14 (App Router)
 - **Library:** React 18
-- **UI Components:** Lucide React (Icons)
+- **UI Components:** Shadcn/UI & Lucide React (Icons)
 - **Animations:** Framer Motion
-- **Styling:** CSS3 (Globals & Modules)
+- **Styling:** Tailwind CSS & CSS3 (Globals & Modules)
 
 ## Backend
 - **Environment:** Node.js
