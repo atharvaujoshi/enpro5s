@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { Jimp } from 'jimp'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '../auth/[...nextauth]/route'
-import { sendCompletionEmailIfFinished } from '../../../lib/notifications'
+import { sendUploadNotification, sendCompletionNotification } from '../../../lib/notifications'
 
 const uri = process.env.MONGODB_URI
 
@@ -144,6 +144,14 @@ export async function POST(request) {
           $set: { updatedAt: new Date() }
         }
       )
+
+      // Trigger notification for 'before' upload
+      try {
+        const zone = await db.collection('zones').findOne({ id: zoneId }, { projection: { name: 1 } })
+        await sendUploadNotification(zone?.name || `Zone ${zoneId}`, 'before', workId)
+      } catch (notifyError) {
+        console.error('Notification error (non-blocking):', notifyError)
+      }
     } else if (photoType === 'after') {
       const targetWorkId = formData.get('workId') // Must exist for after
       if (!targetWorkId) {
@@ -197,7 +205,11 @@ export async function POST(request) {
           { projection: { name: 1, "workRecords.$": 1 } }
         )
         if (updatedZone && updatedZone.workRecords?.[0]) {
-          await sendCompletionEmailIfFinished(updatedZone.name || `Zone ${zoneId}`, updatedZone.workRecords[0])
+          const zoneName = updatedZone.name || `Zone ${zoneId}`;
+          // Send notification that 'after' photo was uploaded
+          await sendUploadNotification(zoneName, 'after', targetWorkId);
+          // Send summary notification for completion
+          await sendCompletionNotification(zoneName, updatedZone.workRecords[0]);
         }
       } catch (notifyError) {
         console.error('Notification error (non-blocking):', notifyError)
