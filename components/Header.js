@@ -29,8 +29,8 @@ export function Header() {
 
   return (
     <header className="glass-header sticky top-0 z-50 w-full">
-      <div className="container flex h-20 items-center justify-between">
-        <div className="flex items-center gap-6">
+      <div className="container flex h-auto min-h-[80px] py-4 md:py-0 items-center justify-center flex-col md:flex-row md:justify-between gap-4">
+        <div className="flex items-center gap-6 justify-center">
           {zoneId && (
             <Button 
               variant="ghost" 
@@ -41,18 +41,18 @@ export function Header() {
               <ArrowLeft size={20} />
             </Button>
           )}
-          <Link href="/" className="brand-logo">
+          <Link href="/" className="brand-logo justify-center">
             <ShieldCheck size={32} className="text-primary animate-pulse-slow" />
-            <span className="hidden sm:inline-block">ZoneTracker</span>
+            <span className="inline-block">ZoneTracker</span>
           </Link>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 justify-center">
           <ModeToggle />
           
           {isAuthenticated ? (
-            <div className="flex items-center gap-4 pl-4 border-l border-glass-border">
-              <div className="hidden md:flex flex-col items-end gap-0.5">
+            <div className="flex items-center gap-4 pl-4 border-l border-glass-border justify-center">
+              <div className="flex flex-col items-center md:items-end gap-0.5">
                 <span className="text-sm font-bold leading-none">{session.user.name}</span>
                 <Badge variant="secondary" className="text-[10px] uppercase tracking-wider px-1.5 py-0 h-4 rounded-md bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400 border-none">
                   {session.user.role}
