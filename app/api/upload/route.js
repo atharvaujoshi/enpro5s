@@ -1,9 +1,9 @@
-
 import { MongoClient } from 'mongodb'
 import { writeFile, mkdir } from 'fs/promises'
 import path from 'path'
 import { v4 as uuidv4 } from 'uuid'
-import { Jimp } from 'jimp'
+import { Jimp, loadFont } from 'jimp'
+import { FONT_SANS_32_WHITE } from 'jimp/fonts'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '../auth/[...nextauth]/route'
 import { 
@@ -19,12 +19,17 @@ const uri = process.env.MONGODB_URI
 async function addWatermark(buffer, text) {
   try {
     const image = await Jimp.read(buffer)
-    const font = await Jimp.loadFont(Jimp.FONT_SANS_32_WHITE)
+    const font = await loadFont(FONT_SANS_32_WHITE)
     
     // Add text at bottom left
-    image.print(font, 20, image.getHeight() - 50, text)
+    image.print({
+      font,
+      x: 20,
+      y: image.height - 50,
+      text
+    })
     
-    return await image.getBufferAsync(Jimp.MIME_JPEG)
+    return await image.getBuffer('image/jpeg')
   } catch (error) {
     console.error('Watermark error:', error)
     return buffer // Return original if fails
@@ -72,8 +77,12 @@ export async function POST(request) {
       return Response.json({ error: 'File must be an image' }, { status: 400 })
     }
 
-    // Create uploads directory
-    const uploadsDir = path.join(process.cwd(), 'public', 'uploads')
+    // Vercel / Serverless Fix: Use /tmp for uploads (Non-persistent)
+    const isServerless = process.env.VERCEL === '1'
+    const uploadsDir = isServerless 
+      ? path.join('/tmp', 'uploads')
+      : path.join(process.cwd(), 'public', 'uploads')
+
     try {
       await mkdir(uploadsDir, { recursive: true })
     } catch (error) {
@@ -99,7 +108,7 @@ export async function POST(request) {
     // Prepare photo data
     const photoData = {
       _id: uuidv4(),
-      url: `/uploads/${filename}`,
+      url: isServerless ? `/api/photos/${filename}` : `/uploads/${filename}`,
       filename: filename,
       originalName: photo.name,
       timestamp: new Date(),
@@ -123,17 +132,6 @@ export async function POST(request) {
         deadline.setDate(deadline.getDate() + 7) // Default 7 days
       }
 
-      // Check if we are appending to an existing work record (if workId was passed for a 'before' photo)
-      // The frontend logic for 'before' currently implies creating NEW records.
-      // But if we want to allow "Add more photos" to FPP, we might need to handle appending.
-      // For now, assume 'before' creates new, unless we implement specific "Add to existing" logic.
-      // Based on prompt: "FPP tab total 6 photo uploads... option to add more".
-      // This implies we might want to append to an OPEN FPP record.
-      
-      // Let's check if there is an open (inprogress) FPP record for this zone to append to?
-      // Or simply create new ones. The prompt says "total 6 photo uploads are required".
-      // Simpler approach: Create the record. The UI can group them or we can append if frontend sends workId.
-      
       const newWorkRecord = {
         _id: workId,
         workType: workType,
