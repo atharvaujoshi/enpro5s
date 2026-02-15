@@ -21,5 +21,6 @@
 - **Date/Time:** Moment.js
 - **ID Generation:** UUID (v4)
 - **Automated Communication:** Standardized notification and user utility modules leveraging Nodemailer.
+- **Data Visualization:** Recharts for interactive SVG charting and analytics.
 - **Reporting:** jsPDF and html2canvas
 - **Email:** Nodemailer

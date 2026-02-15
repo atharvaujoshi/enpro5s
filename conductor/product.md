@@ -21,5 +21,7 @@ Zone Photo Tracker is a specialized documentation tool for industrial environmen
 - **Role-Based Workflow:** Strict enforcement of "Before" photo capture by standard users and "After" photo upload by Zone Managers.
 - **Automated Data Capture:** Server-side timestamping and automatic duration calculation between photos.
 - **Multi-Role Notifications:** Automated email alerts routing through Users, Zone Managers, and the CEO for documentation start, completion, and final approval.
-- **Visual Reporting:** Real-time status indicators (Pending, Before, Complete) and side-by-side visual comparisons.
+- **Modern Industrial Interface:** A high-performance, mobile-optimized UI built with Tailwind CSS and Shadcn/UI, featuring glassmorphic depth and high-contrast visibility.
+- **Interactive Analytics:** Real-time progress charts and animated statistics for executive and management oversight.
+- **Visual Reporting:** Side-by-side photo comparisons with automated timestamping and professional export options.
 - **Multi-Format Export:** Ability to download zone reports in JPG and PDF formats for offline documentation and sharing.
