@@ -4,7 +4,7 @@
 - [x] Task: Configure environment variables and Nodemailer transporter [c89ced1]
     - [ ] Add `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, and `MANAGER_EMAIL` to `.env.local`
     - [ ] Create a utility to initialize and export the Nodemailer transporter
-- [ ] Task: Create Email Template Utility
+- [x] Task: Create Email Template Utility [3b95af4]
     - [ ] Write tests for the email template generator
     - [ ] Implement a function that generates the HTML content for the completion email
 - [ ] Task: Conductor - User Manual Verification 'Phase 1: Environment and Core Setup' (Protocol in workflow.md)
