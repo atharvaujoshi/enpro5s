@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 import { useState, useEffect, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
@@ -6,23 +6,37 @@ import { useSession } from 'next-auth/react'
 import moment from 'moment'
 import html2canvas from 'html2canvas'
 import jsPDF from 'jspdf'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { 
-  ArrowLeft, 
   Upload, 
   FileImage, 
   CheckSquare, 
   XSquare, 
-  History, 
-  Trash2, 
   Download,
   Clock,
-  AlertTriangle,
   ShieldCheck,
-  AlertCircle,
   Bell,
-  ChevronRight
+  ChevronRight,
+  Plus,
+  Image as ImageIcon,
+  CheckCircle2,
+  AlertCircle
 } from 'lucide-react'
+import { Header } from '@/components/Header'
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { cn } from "@/lib/utils"
 
 export default function ZonePage() {
   const params = useParams()
@@ -101,6 +115,8 @@ export default function ZonePage() {
       if (response.ok) {
         setSuccess(`${photoType.toUpperCase()} uploaded!`)
         setShowUploadForm(false)
+        setSelectedFile(null)
+        setPreviewUrl(null)
         fetchZoneData()
       }
     } finally {
@@ -117,153 +133,311 @@ export default function ZonePage() {
     fetchZoneData()
   }
 
-  const downloadCombined = async (format) => {
-    const canvas = await html2canvas(combinedRef.current, { scale: 2 })
-    if (format === 'pdf') {
-      const pdf = new jsPDF('l', 'px', [canvas.width, canvas.height])
-      pdf.addImage(canvas.toDataURL('image/jpeg'), 'JPEG', 0, 0, canvas.width, canvas.height)
-      pdf.save(`zone_${zoneId}.pdf`)
-    } else {
-      const link = document.createElement('a')
-      link.href = canvas.toDataURL('image/jpeg')
-      link.download = `zone_${zoneId}.${format}`
-      link.click()
-    }
-  }
-
-  if (loading) return <div className="loading">Initializing Secure Session...</div>
+  if (loading) return (
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center">
+      <div className="h-12 w-12 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent" />
+      <p className="mt-4 text-slate-500 font-bold animate-pulse">Initializing Secure Inspection Session...</p>
+    </div>
+  )
 
   const workRecords = zoneData?.workRecords || []
   const availableWorks = workRecords.filter(w => w.beforePhotos?.length > 0 && w.status !== 'complete' && w.workType === selectedWorkType)
 
   return (
-    <div style={{ minHeight: '100vh' }}>
-      <header className="glass-header">
-        <div className="header-content container">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-            <button className="btn btn-secondary" onClick={() => router.push('/')} style={{ padding: '10px' }}>
-              <ArrowLeft size={20} />
-            </button>
-            <div className="brand-logo">
-              <ShieldCheck size={32} />
-              <span>ZoneTracker</span>
-            </div>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <span className="role-badge">{session?.user?.role}</span>
-            <span style={{ fontWeight: '700', color: '#1e293b' }}>{session?.user?.name}</span>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col">
+      <Header />
 
-      <main className="main-content container">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '40px' }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#64748b', fontSize: '0.9rem', marginBottom: '8px' }}>
-              <span>Dashboard</span> <ChevronRight size={14} /> <span>Zone {zoneId}</span>
+      <main className="flex-1 container py-12 space-y-10">
+        {/* Breadcrumbs & Title */}
+        <div className="flex flex-col md:flex-row justify-between items-end gap-6">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-sm font-bold text-slate-400 uppercase tracking-tighter">
+              <span>Operations</span>
+              <ChevronRight size={14} />
+              <span className="text-primary">Zone {zoneId}</span>
             </div>
-            <h1 style={{ fontSize: '2.5rem', fontWeight: '900' }}>Inspection Records</h1>
+            <h1 className="text-4xl font-black tracking-tight text-slate-900 dark:text-white">Inspection Records</h1>
           </div>
+          
           {session?.user?.role !== 'ceo' && (
-            <button className="btn btn-primary" onClick={() => setShowUploadForm(!showUploadForm)}>
-              <Upload size={20} /> New Record
-            </button>
+            <Button 
+              size="lg" 
+              className="rounded-2xl h-14 px-8 font-bold shadow-lg shadow-primary/20 transition-all active:scale-95"
+              onClick={() => setShowUploadForm(!showUploadForm)}
+            >
+              {showUploadForm ? <XSquare className="mr-2 h-5 w-5" /> : <Plus className="mr-2 h-5 w-5" />}
+              {showUploadForm ? 'Cancel Entry' : 'New Inspection'}
+            </Button>
           )}
         </div>
 
-        {showUploadForm && (
-          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="glass-card" style={{ padding: '40px', marginBottom: '48px' }}>
-            <div style={{ maxWidth: '600px', margin: '0 auto' }}>
-              <div className="work-type-selector">
-                {['WPP', 'WFP', 'FPP'].map(t => <div key={t} className={`type-option ${selectedWorkType === t ? 'selected' : ''}`} onClick={() => setSelectedWorkType(t)}>{t}</div>)}
-              </div>
-              <div className="photo-type-selector">
-                {session?.user?.role !== 'zone_manager' && <button className={`photo-type-btn ${photoType === 'before' ? 'active' : ''}`} onClick={() => setPhotoType('before')}>Before</button>}
-                <button className={`photo-type-btn ${photoType === 'after' ? 'active' : ''}`} onClick={() => setPhotoType('after')}>After</button>
-              </div>
-              {photoType === 'after' && (
-                <div className="work-selector" style={{ marginBottom: '24px' }}>
-                  <label>Select Active Task</label>
-                  <select value={selectedWorkId} onChange={(e) => setSelectedWorkId(e.target.value)}>
-                    <option value="">Choose work ID...</option>
-                    {availableWorks.map(w => <option key={w._id} value={w._id}>{w.workType} - {w._id.slice(-8).toUpperCase()}</option>)}
-                  </select>
-                </div>
-              )}
-              <label htmlFor="p-in" className="file-input-label">
-                <FileImage size={48} style={{ color: 'var(--primary)', marginBottom: '16px' }} />
-                <strong>Select Inspection Photo</strong>
-              </label>
-              <input id="p-in" type="file" className="file-input" onChange={handleFileSelect} />
-              {previewUrl && (
-                <div style={{ marginTop: '32px', textAlign: 'center' }}>
-                  <img src={previewUrl} className="preview-img" style={{ marginBottom: '24px' }} />
-                  <button className="btn btn-primary" style={{ width: '100%', padding: '16px' }} onClick={uploadPhoto} disabled={uploading}>
-                    {uploading ? 'Processing...' : 'Upload to Database'}
-                  </button>
-                </div>
-              )}
-            </div>
-          </motion.div>
-        )}
+        {/* Modern Upload Interface */}
+        <AnimatePresence>
+          {showUploadForm && (
+            <motion.div 
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              className="overflow-hidden"
+            >
+              <Card className="glass-card border-none shadow-xl">
+                <CardContent className="p-8 md:p-12">
+                  <div className="max-w-3xl mx-auto space-y-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <div className="space-y-4">
+                        <Label className="text-xs font-black uppercase tracking-widest text-slate-400">1. Select Protocol</Label>
+                        <Tabs value={selectedWorkType} onValueChange={setSelectedWorkType} className="w-full">
+                          <TabsList className="grid grid-cols-3 h-14 bg-slate-100 dark:bg-slate-800 rounded-2xl p-1.5">
+                            <TabsTrigger value="WPP" className="rounded-xl font-bold data-[state=active]:bg-white dark:data-[state=active]:bg-slate-950 data-[state=active]:shadow-sm">WPP</TabsTrigger>
+                            <TabsTrigger value="WFP" className="rounded-xl font-bold data-[state=active]:bg-white dark:data-[state=active]:bg-slate-950 data-[state=active]:shadow-sm">WFP</TabsTrigger>
+                            <TabsTrigger value="FPP" className="rounded-xl font-bold data-[state=active]:bg-white dark:data-[state=active]:bg-slate-950 data-[state=active]:shadow-sm">FPP</TabsTrigger>
+                          </TabsList>
+                        </Tabs>
+                      </div>
 
-        {workRecords.map((work, idx) => (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: idx * 0.1 }} key={work._id} className="work-record">
-            <div className="work-header">
-              <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                <span style={{ fontSize: '1.5rem', fontWeight: '900', color: 'var(--primary)' }}>{work.workType}</span>
-                <span style={{ fontFamily: 'monospace', background: '#f1f5f9', padding: '6px 12px', borderRadius: '8px', fontWeight: '700' }}>#{work._id.slice(-8).toUpperCase()}</span>
-                {work.status === 'complete' ? <span className="badge badge-complete">Verified</span> : <span className="badge badge-progress">In Review</span>}
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                {session?.user?.role === 'ceo' && work.status !== 'complete' && (
-                  <button className="btn btn-secondary" onClick={() => pingManager(work._id)} style={{ padding: '8px 16px' }}>
-                    <Bell size={16} /> Urgent Ping
-                  </button>
-                )}
-                <div className="badge" style={{ background: moment() > moment(work.deadline) ? '#fee2e2' : '#f1f5f9', color: moment() > moment(work.deadline) ? '#b91c1c' : '#475569', display: 'flex', gap: '8px', alignItems: 'center' }}>
-                  <Clock size={14} /> Due: {moment(work.deadline).format('MMM DD, HH:mm')}
-                </div>
-              </div>
-            </div>
-
-            <div className="work-photos" ref={work.status === 'complete' ? combinedRef : null}>
-              <div className="photo-section">
-                <h4><div style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'var(--primary)' }}></div> Initial State (Before)</h4>
-                <div className="photo-grid">
-                  {work.beforePhotos.map(p => (
-                    <div key={p._id} className="photo-card">
-                      <img src={p.url} />
-                      <div className="photo-overlay">{moment(p.timestamp).format('DD MMM YYYY, HH:mm')}</div>
+                      <div className="space-y-4">
+                        <Label className="text-xs font-black uppercase tracking-widest text-slate-400">2. Record Phase</Label>
+                        <div className="flex gap-2 p-1.5 bg-slate-100 dark:bg-slate-800 rounded-2xl h-14">
+                          {session?.user?.role !== 'zone_manager' && (
+                            <button 
+                              className={cn(
+                                "flex-1 rounded-xl font-bold transition-all",
+                                photoType === 'before' ? "bg-white dark:bg-slate-950 shadow-sm text-primary" : "text-slate-500"
+                              )}
+                              onClick={() => setPhotoType('before')}
+                            >
+                              Before
+                            </button>
+                          )}
+                          <button 
+                            className={cn(
+                              "flex-1 rounded-xl font-bold transition-all",
+                              photoType === 'after' ? "bg-white dark:bg-slate-950 shadow-sm text-primary" : "text-slate-500"
+                            )}
+                            onClick={() => setPhotoType('after')}
+                          >
+                            After
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                  ))}
-                </div>
-              </div>
-              <div className="photo-section">
-                <h4><div style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'var(--success)' }}></div> Final Result (After)</h4>
-                <div className="photo-grid">
-                  {work.afterPhotos.length > 0 ? work.afterPhotos.map(p => (
-                    <div key={p._id} className="photo-card">
-                      <img src={p.url} />
-                      <div className="photo-overlay">{moment(p.timestamp).format('DD MMM YYYY, HH:mm')}</div>
-                    </div>
-                  )) : <div style={{ height: '200px', borderRadius: '20px', background: '#f8fafc', border: '2px dashed #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#94a3b8' }}>Awaiting Evidence</div>}
-                </div>
-              </div>
-            </div>
 
-            {session?.user?.role === 'ceo' && work.status === 'inprogress' && (
-              <div style={{ marginTop: '40px', padding: '32px', background: '#f8fafc', borderRadius: '24px' }}>
-                <h4 style={{ marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}><ShieldCheck size={20} /> CEO Verification</h4>
-                <textarea placeholder="Approval notes..." value={approvalComment} onChange={(e) => setApprovalComment(e.target.value)} style={{ width: '100%', height: '100px', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0', marginBottom: '20px', outline: 'none' }} />
-                <div style={{ display: 'flex', gap: '16px' }}>
-                  <button className="btn btn-primary" onClick={() => approveWork(work._id, true)} style={{ flex: 1, background: 'var(--success)' }}><CheckSquare size={20} /> Approve</button>
-                  <button className="btn btn-primary" onClick={() => approveWork(work._id, false)} style={{ flex: 1, background: 'var(--danger)' }}><XSquare size={20} /> Reject</button>
+                    {photoType === 'after' && (
+                      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+                        <Label htmlFor="active-task" className="text-xs font-black uppercase tracking-widest text-slate-400">3. Link to Active Task</Label>
+                        <Select value={selectedWorkId} onValueChange={setSelectedWorkId}>
+                          <SelectTrigger id="active-task" className="h-14 rounded-2xl bg-white/50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800">
+                            <SelectValue placeholder="Identify work record..." />
+                          </SelectTrigger>
+                          <SelectContent className="rounded-2xl border-slate-200 dark:border-slate-800">
+                            {availableWorks.map(w => (
+                              <SelectItem key={w._id} value={w._id} className="rounded-xl py-3">
+                                <div className="flex items-center gap-3">
+                                  <Badge variant="outline">{w.workType}</Badge>
+                                  <span className="font-mono font-bold">{w._id.slice(-8).toUpperCase()}</span>
+                                </div>
+                              </SelectItem>
+                            ))}
+                            {availableWorks.length === 0 && (
+                              <div className="p-4 text-center text-xs font-bold text-slate-400">No active {selectedWorkType} records available</div>
+                            )}
+                          </SelectContent>
+                        </Select>
+                      </motion.div>
+                    )}
+
+                    <div className="space-y-4">
+                      <Label className="text-xs font-black uppercase tracking-widest text-slate-400">
+                        {photoType === 'after' ? '4.' : '3.'} Documentation Evidence
+                      </Label>
+                      <label 
+                        className={cn(
+                          "flex flex-col items-center justify-center w-full py-16 border-2 border-dashed rounded-[32px] cursor-pointer transition-all bg-white/30 dark:bg-slate-900/30 hover:bg-white/50 dark:hover:bg-slate-900/50",
+                          selectedFile ? "border-primary/50 bg-primary/5" : "border-slate-200 dark:border-slate-800"
+                        )}
+                      >
+                        <div className="flex flex-col items-center justify-center space-y-4">
+                          <div className={cn(
+                            "p-4 rounded-2xl transition-colors",
+                            selectedFile ? "bg-primary text-white" : "bg-slate-100 dark:bg-slate-800 text-slate-400"
+                          )}>
+                            <FileImage size={32} />
+                          </div>
+                          <div className="text-center">
+                            <p className="text-sm font-black text-slate-900 dark:text-white">
+                              {selectedFile ? selectedFile.name : 'Choose or drag photo'}
+                            </p>
+                            <p className="text-xs font-medium text-slate-500">RAW, JPEG, PNG (Max 10MB)</p>
+                          </div>
+                        </div>
+                        <input type="file" className="hidden" onChange={handleFileSelect} accept="image/*" />
+                      </label>
+                    </div>
+
+                    {previewUrl && (
+                      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="space-y-6">
+                        <div className="relative rounded-[32px] overflow-hidden border-4 border-white dark:border-slate-800 shadow-2xl">
+                          <img src={previewUrl} className="w-full max-h-[400px] object-cover" />
+                          <div className="absolute top-4 right-4">
+                            <Badge className="bg-white/90 dark:bg-slate-950/90 text-primary backdrop-blur-md border-none font-black">PREVIEW</Badge>
+                          </div>
+                        </div>
+                        <Button 
+                          className="w-full h-16 rounded-2xl text-lg font-black shadow-xl shadow-primary/30"
+                          onClick={uploadPhoto}
+                          disabled={uploading || (photoType === 'after' && !selectedWorkId)}
+                        >
+                          {uploading ? (
+                            <>
+                              <Activity className="mr-3 h-6 w-6 animate-spin" />
+                              Processing Evidence...
+                            </>
+                          ) : (
+                            <>
+                              <Upload className="mr-3 h-6 w-6" />
+                              Commit to Protocol
+                            </>
+                          )}
+                        </Button>
+                      </motion.div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Inspection Records List */}
+        <div className="space-y-12">
+          {workRecords.map((work, idx) => (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }} 
+              animate={{ opacity: 1, y: 0 }} 
+              transition={{ delay: idx * 0.05 }} 
+              key={work._id} 
+              className="work-record overflow-hidden"
+            >
+              <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-10 pb-6 border-b border-slate-100 dark:border-slate-800">
+                <div className="flex flex-wrap items-center gap-4">
+                  <span className="text-3xl font-black text-primary">{work.workType}</span>
+                  <span className="font-mono text-sm font-bold bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-xl">#{work._id.slice(-8).toUpperCase()}</span>
+                  {work.status === 'complete' ? (
+                    <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20 px-4 py-1.5 rounded-full font-black">VERIFIED</Badge>
+                  ) : (
+                    <Badge className="bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20 px-4 py-1.5 rounded-full font-black uppercase">In Review</Badge>
+                  )}
+                </div>
+                
+                <div className="flex flex-wrap items-center gap-4">
+                  {session?.user?.role === 'ceo' && work.status !== 'complete' && (
+                    <Button variant="outline" className="rounded-xl border-slate-200 dark:border-slate-800 hover:bg-rose-50 hover:text-rose-600 font-bold" onClick={() => pingManager(work._id)}>
+                      <Bell size={16} className="mr-2" /> Urgent Ping
+                    </Button>
+                  )}
+                  <div className={cn(
+                    "flex items-center gap-3 px-5 py-2.5 rounded-2xl font-black text-sm shadow-inner",
+                    moment() > moment(work.deadline) ? "bg-rose-50 text-rose-600" : "bg-slate-100 dark:bg-slate-800 text-slate-500"
+                  )}>
+                    <Clock size={16} /> 
+                    <span>DEADLINE: {moment(work.deadline).format('MMM DD, HH:mm')}</span>
+                  </div>
                 </div>
               </div>
-            )}
-          </motion.div>
-        ))}
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div className="space-y-6">
+                  <h4 className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                    <div className="w-2 h-2 rounded-full bg-primary" /> 
+                    Initial Baseline (Before)
+                  </h4>
+                  <div className="grid grid-cols-1 gap-4">
+                    {work.beforePhotos.map(p => (
+                      <div key={p._id} className="photo-card group">
+                        <img src={p.url} className="w-full aspect-[4/3] object-cover transition-transform duration-500 group-hover:scale-105" />
+                        <div className="photo-overlay">
+                          <Activity size={12} className="inline mr-2" />
+                          {moment(p.timestamp).format('DD MMM YYYY, HH:mm')}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  <h4 className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                    <div className="w-2 h-2 rounded-full bg-emerald-500" /> 
+                    Final Execution (After)
+                  </h4>
+                  <div className="grid grid-cols-1 gap-4">
+                    {work.afterPhotos.length > 0 ? (
+                      work.afterPhotos.map(p => (
+                        <div key={p._id} className="photo-card group">
+                          <img src={p.url} className="w-full aspect-[4/3] object-cover transition-transform duration-500 group-hover:scale-105" />
+                          <div className="photo-overlay">
+                            <CheckCircle2 size={12} className="inline mr-2 text-emerald-400" />
+                            {moment(p.timestamp).format('DD MMM YYYY, HH:mm')}
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="aspect-[4/3] rounded-[32px] bg-slate-50 dark:bg-slate-900/50 border-4 border-dashed border-slate-100 dark:border-slate-800 flex flex-col items-center justify-center text-slate-400 space-y-4">
+                        <ImageIcon size={48} className="opacity-20" />
+                        <p className="text-xs font-black uppercase tracking-widest opacity-50">Awaiting Evidence</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {session?.user?.role === 'ceo' && work.status === 'inprogress' && (
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mt-12 p-8 bg-indigo-50/50 dark:bg-indigo-900/10 rounded-[32px] border border-indigo-100 dark:border-indigo-900/20">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="p-2 bg-indigo-600 text-white rounded-xl">
+                      <ShieldCheck size={20} />
+                    </div>
+                    <h4 className="text-lg font-black tracking-tight">Executive Verification</h4>
+                  </div>
+                  
+                  <div className="space-y-6">
+                    <Textarea 
+                      placeholder="Enter detailed review notes or reason for rejection..." 
+                      value={approvalComment} 
+                      onChange={(e) => setApprovalComment(e.target.value)} 
+                      className="min-h-[120px] rounded-2xl bg-white dark:bg-slate-900 border-indigo-100 dark:border-indigo-900/30 focus-visible:ring-indigo-600"
+                    />
+                    
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      <Button 
+                        className="flex-1 h-14 rounded-2xl bg-emerald-600 hover:bg-emerald-700 font-black shadow-lg shadow-emerald-600/20" 
+                        onClick={() => approveWork(work._id, true)}
+                      >
+                        <CheckSquare className="mr-2 h-5 w-5" /> Confirm Execution
+                      </Button>
+                      <Button 
+                        variant="destructive"
+                        className="flex-1 h-14 rounded-2xl font-black shadow-lg shadow-rose-600/20" 
+                        onClick={() => approveWork(work._id, false)}
+                      >
+                        <XSquare className="mr-2 h-5 w-5" /> Reject Protocol
+                      </Button>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </motion.div>
+          ))}
+
+          {workRecords.length === 0 && (
+            <div className="py-32 text-center bg-white/30 dark:bg-slate-900/30 rounded-[40px] border-2 border-dashed border-slate-200 dark:border-slate-800">
+              <div className="mx-auto w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center text-slate-400 mb-6">
+                <AlertCircle size={40} />
+              </div>
+              <h3 className="text-xl font-black text-slate-900 dark:text-white mb-2">No Inspection Data</h3>
+              <p className="text-slate-500 font-medium">Capture the initial state to begin the documentation protocol.</p>
+            </div>
+          )}
+        </div>
       </main>
     </div>
   )
