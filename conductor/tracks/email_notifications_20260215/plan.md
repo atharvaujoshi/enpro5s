@@ -13,7 +13,7 @@
 - [x] Task: Create Notification Utility [2785d8b]
     - [ ] Write tests for the notification logic (checking completion and triggering email)
     - [ ] Implement `lib/notifications.js` to handle email triggers
-- [ ] Task: Integrate Notification Utility into Upload API
+- [x] Task: Integrate Notification Utility into Upload API [97bac6f]
     - [ ] Update `api/upload` route to call the notification utility
     - [ ] Implement error handling and logging for the notification process
 - [ ] Task: Conductor - User Manual Verification 'Phase 2: Integration and Logic' (Protocol in workflow.md)
