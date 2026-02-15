@@ -11,13 +11,13 @@
     - [ ] Implement the Dark Mode toggle in the layout
 - [x] Task: Conductor - User Manual Verification 'Phase 1: Infrastructure & Core Theme' (Protocol in workflow.md)
 
-## Phase 2: Layout & Global Navigation
+## Phase 2: Layout & Global Navigation [checkpoint: dfc1898]
 - [x] Task: Overhaul Global Header [ae7b17b]
     - [ ] Create tests for the new Header component
     - [ ] Implement responsive Glassmorphic Header with role-based navigation
 - [x] Task: Create Common UI Components (Shadcn) [41c1355]
     - [ ] Install and style core components: Button, Card, Badge, Avatar
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: Layout & Global Navigation' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 2: Layout & Global Navigation' (Protocol in workflow.md)
 
 ## Phase 3: Authentication & Login Revamp
 - [ ] Task: Modernize Login Interface
