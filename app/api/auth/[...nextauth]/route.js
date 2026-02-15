@@ -21,30 +21,37 @@ export const authOptions = {
           await client.connect()
           const db = client.db()
 
-          // Check if user exists
-          let user = await db.collection('users').findOne({ email: credentials.email })
+          // Ensure all default users exist (Upsert)
+          const defaultUsers = [
+            { email: 'atharva.jjoshi20@gmail.com', role: 'ceo', name: 'CEO' },
+            { email: 'spydarr1106@gmail.com', role: 'user', name: 'Standard User' }
+          ]
 
-          // Create default users if they don't exist
-          if (!user) {
-            const defaultUsers = [
-              { email: 'ceo@company.com', password: await bcrypt.hash('password', 12), role: 'ceo', name: 'CEO' },
-              { email: 'user@company.com', password: await bcrypt.hash('password', 12), role: 'user', name: 'User' }
-            ]
-
-            // Create zone managers
-            for (let i = 1; i <= 13; i++) {
-              defaultUsers.push({
-                email: `manager${i}@company.com`,
-                password: await bcrypt.hash('password', 12),
-                role: 'zone_manager',
-                name: `Zone Manager ${i}`,
-                assignedZone: i
-              })
-            }
-
-            await db.collection('users').insertMany(defaultUsers)
-            user = await db.collection('users').findOne({ email: credentials.email })
+          // Create zone managers
+          for (let i = 1; i <= 13; i++) {
+            const email = i === 1 ? 'atharvaujoshi@gmail.com' : `manager${i}@company.com`;
+            defaultUsers.push({
+              email: email,
+              role: 'zone_manager',
+              name: `Zone Manager ${i}`,
+              assignedZone: i
+            })
           }
+
+          const hashedPassword = await bcrypt.hash('password', 12);
+          for (const u of defaultUsers) {
+            await db.collection('users').updateOne(
+              { email: u.email },
+              { 
+                $setOnInsert: { password: hashedPassword },
+                $set: { role: u.role, name: u.name, assignedZone: u.assignedZone }
+              },
+              { upsert: true }
+            );
+          }
+
+          // Now find the specific user
+          let user = await db.collection('users').findOne({ email: credentials.email })
 
           await client.close()
 

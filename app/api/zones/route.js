@@ -35,7 +35,7 @@ export async function GET(request) {
     }
 
     // Process zones and filter work records based on status
-    const processedZones = zones.map(zone => {
+    let processedZones = zones.map(zone => {
       let workRecords = zone.workRecords || []
 
       // Filter work records based on tab status
@@ -74,6 +74,11 @@ export async function GET(request) {
         lastUpdated: zone.updatedAt ? new Date(zone.updatedAt).toLocaleDateString() : 'N/A'
       }
     })
+
+    // For 'complete' and 'rejected' tabs, only show zones that have matching records
+    if (status === 'complete' || status === 'rejected') {
+      processedZones = processedZones.filter(z => z.workCount > 0)
+    }
 
     await client.close()
 

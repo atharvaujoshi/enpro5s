@@ -54,6 +54,11 @@ export async function POST(request) {
       return Response.json({ error: 'Zone Managers are only allowed to upload After photos.' }, { status: 403 })
     }
 
+    // Role Validation: Users cannot upload 'after' photos
+    if (photoType === 'after' && session.user.role === 'user') {
+      return Response.json({ error: 'Standard Users are only allowed to upload Before photos.' }, { status: 403 })
+    }
+
     // Validation
     if (!photo || !zoneId || !photoType) {
       return Response.json({ error: 'Missing required fields' }, { status: 400 })

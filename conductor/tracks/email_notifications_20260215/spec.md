@@ -8,10 +8,14 @@ Automate communication to industrial managers by sending an email notification w
 - **As a Field Worker**, I want the system to handle notifications automatically so I can focus on my tasks.
 
 ## Functional Requirements
-- **Trigger:** An email must be sent immediately after a "Before" photo is uploaded, and another email when an "After" photo is uploaded.
+- **Trigger & Recipient Workflow:**
+    - **Before Upload (by User):** Email sent to the **Zone Manager** assigned to that zone.
+    - **After Upload (by Zone Manager):** Email sent to the **CEO** to review (Approve/Reject).
+    - **Approval/Rejection (by CEO):** Email sent back to the **Zone Manager** with the decision.
 - **Content:**
-    - **Before Upload:** Zone Name, Work ID, Timestamp, and a notification that documentation has started.
-    - **After Upload (Cycle Complete):** Zone Name, Work ID, Timestamps (Before & After), and the total time elapsed.
+    - **Before Upload:** Zone Name, Work ID, Timestamp, and notification of documentation start.
+    - **After Upload:** Zone Name, Work ID, Timestamps (Before & After), and link/instruction for CEO approval.
+    - **Decision:** Zone Name, Work ID, Status (Approved/Rejected), and CEO's comment.
 - **Recipient:** The recipient email address should be configurable via environment variables (e.g., `MANAGER_EMAIL`).
 - **Resilience:** Email sending failures should be logged but should not prevent the photo upload from succeeding.
 
