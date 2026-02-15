@@ -43,9 +43,9 @@ export default function Dashboard() {
   const fetchReport = async () => {
     try {
       const response = await fetch('/api/report')
-      if (response.ok) {
+      if (response && response.ok) {
         const data = await response.json()
-        setStats(data)
+        if (data) setStats(data)
       }
     } catch (error) {
       console.error('Error fetching report:', error)
@@ -56,8 +56,12 @@ export default function Dashboard() {
     try {
       setLoading(true)
       const response = await fetch(`/api/zones?status=${activeTab}`)
-      const data = await response.json()
-      setZones(data)
+      if (response && response.ok) {
+        const data = await response.json()
+        if (data) setZones(data)
+      } else {
+        console.error('Failed to fetch zones:', response?.status)
+      }
     } catch (error) {
       console.error('Error fetching zones:', error)
     } finally {

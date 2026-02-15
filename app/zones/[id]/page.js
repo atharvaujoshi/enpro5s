@@ -20,7 +20,8 @@ import {
   Plus,
   Image as ImageIcon,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  Activity
 } from 'lucide-react'
 import { Header } from '@/components/Header'
 import { Button } from "@/components/ui/button"
@@ -72,8 +73,12 @@ export default function ZonePage() {
   const fetchZoneData = async () => {
     try {
       const response = await fetch(`/api/zones/${zoneId}`)
-      const data = await response.json()
-      setZoneData(data)
+      if (response && response.ok) {
+        const data = await response.json()
+        if (data) setZoneData(data)
+      } else {
+        setError('Failed to load zone data')
+      }
     } catch (error) {
       setError('Failed to load zone data')
     } finally {
@@ -84,7 +89,7 @@ export default function ZonePage() {
   const pingManager = async (workId) => {
     try {
       const response = await fetch(`/api/work/${workId}/ping`, { method: 'POST' })
-      if (response.ok) {
+      if (response && response.ok) {
         setSuccess('Manager pinged successfully!')
         setTimeout(() => setSuccess(''), 3000)
       }
@@ -94,7 +99,7 @@ export default function ZonePage() {
   }
 
   const handleFileSelect = (event) => {
-    const file = event.target.files[0]
+    const file = event?.target?.files?.[0]
     if (file) {
       setSelectedFile(file)
       setPreviewUrl(URL.createObjectURL(file))
@@ -102,6 +107,7 @@ export default function ZonePage() {
   }
 
   const uploadPhoto = async () => {
+    if (!selectedFile) return;
     setUploading(true)
     const formData = new FormData()
     formData.append('photo', selectedFile)
@@ -112,25 +118,33 @@ export default function ZonePage() {
 
     try {
       const response = await fetch('/api/upload', { method: 'POST', body: formData })
-      if (response.ok) {
+      if (response && response.ok) {
         setSuccess(`${photoType.toUpperCase()} uploaded!`)
         setShowUploadForm(false)
         setSelectedFile(null)
         setPreviewUrl(null)
         fetchZoneData()
       }
+    } catch (err) {
+      console.error('Upload failed:', err)
     } finally {
       setUploading(false)
     }
   }
 
   const approveWork = async (workId, approved) => {
-    await fetch(`/api/zones/${zoneId}/approve`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ workId, approved, comment: approvalComment })
-    })
-    fetchZoneData()
+    try {
+      const response = await fetch(`/api/zones/${zoneId}/approve`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ workId, approved, comment: approvalComment })
+      })
+      if (response && response.ok) {
+        fetchZoneData()
+      }
+    } catch (err) {
+      console.error('Approval failed:', err)
+    }
   }
 
   if (loading) return (
@@ -170,6 +184,17 @@ export default function ZonePage() {
             </Button>
           )}
         </div>
+
+        {error && (
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="max-w-2xl mx-auto bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/30 text-red-600 dark:text-red-400 p-6 rounded-[32px] flex items-center justify-center gap-4 text-center font-bold"
+          >
+            <AlertCircle size={24} />
+            <span>{error}</span>
+          </motion.div>
+        )}
 
         {/* Modern Upload Interface */}
         <AnimatePresence>
