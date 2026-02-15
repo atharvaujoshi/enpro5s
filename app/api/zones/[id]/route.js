@@ -6,12 +6,15 @@ const uri = process.env.MONGODB_URI
 export async function GET(request, { params }) {
   try {
     if (!uri) {
+      console.error('API Error: MONGODB_URI is not defined')
       return Response.json({ error: 'Database connection not configured' }, { status: 500 })
     }
 
     const zoneId = parseInt(params.id)
+    console.log(`Fetching data for zone: ${zoneId}`)
 
     if (isNaN(zoneId)) {
+      console.error(`API Error: Invalid zone ID provided: ${params.id}`)
       return Response.json({ error: 'Invalid zone ID' }, { status: 400 })
     }
 
@@ -20,6 +23,10 @@ export async function GET(request, { params }) {
 
     const db = client.db()
     const zone = await db.collection('zones').findOne({ id: zoneId })
+
+    if (!zone) {
+      console.warn(`API Warning: Zone ${zoneId} not found in database`)
+    }
 
     await client.close()
 
