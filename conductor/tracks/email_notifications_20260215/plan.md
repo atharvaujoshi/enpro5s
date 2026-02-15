@@ -1,6 +1,6 @@
 # Implementation Plan - Email Notifications
 
-## Phase 1: Environment and Core Setup
+## Phase 1: Environment and Core Setup [checkpoint: a466025]
 - [x] Task: Configure environment variables and Nodemailer transporter [c89ced1]
     - [ ] Add `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, and `MANAGER_EMAIL` to `.env.local`
     - [ ] Create a utility to initialize and export the Nodemailer transporter
