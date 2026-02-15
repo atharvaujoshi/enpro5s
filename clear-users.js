@@ -3,16 +3,13 @@ require('dotenv').config({ path: '.env.local' });
 
 const uri = process.env.MONGODB_URI;
 
-async function checkUsers() {
+async function clearUsers() {
   const client = new MongoClient(uri);
   try {
     await client.connect();
     const db = client.db();
-    const users = await db.collection('users').find({}).toArray();
-    console.log('User Email Addresses and Roles:');
-    users.forEach(u => {
-      console.log(`- ${u.name} (${u.role}): ${u.email}${u.assignedZone ? ` [Zone ${u.assignedZone}]` : ''}`);
-    });
+    const result = await db.collection('users').deleteMany({});
+    console.log(`Deleted ${result.deletedCount} users. The auth route will recreate them on next login.`);
   } catch (error) {
     console.error('Error:', error);
   } finally {
@@ -20,4 +17,4 @@ async function checkUsers() {
   }
 }
 
-checkUsers();
+clearUsers();

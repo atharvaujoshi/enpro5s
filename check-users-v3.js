@@ -9,9 +9,9 @@ async function checkUsers() {
     await client.connect();
     const db = client.db();
     const users = await db.collection('users').find({}).toArray();
-    console.log('User Email Addresses and Roles:');
+    console.log(`Found ${users.length} users in database:`);
     users.forEach(u => {
-      console.log(`- ${u.name} (${u.role}): ${u.email}${u.assignedZone ? ` [Zone ${u.assignedZone}]` : ''}`);
+      console.log(`- ${u.name} (${u.role}): ${u.email}`);
     });
   } catch (error) {
     console.error('Error:', error);

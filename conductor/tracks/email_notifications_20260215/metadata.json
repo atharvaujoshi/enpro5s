@@ -1,8 +1,0 @@
-{
-  "track_id": "email_notifications_20260215",
-  "type": "feature",
-  "status": "new",
-  "created_at": "2026-02-15T15:06:00Z",
-  "updated_at": "2026-02-15T15:06:00Z",
-  "description": "Implement automated email notifications to managers when a zone documentation cycle is completed."
-}
