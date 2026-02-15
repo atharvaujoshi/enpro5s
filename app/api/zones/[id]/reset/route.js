@@ -23,31 +23,29 @@ export async function POST(request, { params }) {
     const db = client.db()
 
     // Get current zone data to delete files
-    const zone = await db.collection('zones').findOne({ zoneId })
+    const zone = await db.collection('zones').findOne({ id: zoneId })
 
-    // Delete files from filesystem (optional - for cleanup)
-    if (zone?.beforePhoto?.filename) {
-      try {
-        const filepath = path.join(process.cwd(), 'public', 'uploads', zone.beforePhoto.filename)
-        await unlink(filepath)
-      } catch (err) {
-        console.log('Before photo file not found or already deleted')
+    // Delete files from filesystem (cleanup)
+    if (zone?.workRecords) {
+      for (const work of zone.workRecords) {
+        const allPhotos = [...(work.beforePhotos || []), ...(work.afterPhotos || []), ...(work.archivedPhotos || [])];
+        for (const photo of allPhotos) {
+          if (photo.filename) {
+            try {
+              const filepath = path.join(process.cwd(), 'public', 'uploads', photo.filename)
+              await unlink(filepath)
+            } catch (err) {
+              // Ignore if file not found
+            }
+          }
+        }
       }
     }
 
-    if (zone?.afterPhoto?.filename) {
-      try {
-        const filepath = path.join(process.cwd(), 'public', 'uploads', zone.afterPhoto.filename)
-        await unlink(filepath)
-      } catch (err) {
-        console.log('After photo file not found or already deleted')
-      }
-    }
-
-    // Remove photo data from database
+    // Clear workRecords in database
     await db.collection('zones').updateOne(
-      { zoneId },
-      { $unset: { beforePhoto: "", afterPhoto: "" } }
+      { id: zoneId },
+      { $set: { workRecords: [], updatedAt: new Date() } }
     )
 
     await client.close()
