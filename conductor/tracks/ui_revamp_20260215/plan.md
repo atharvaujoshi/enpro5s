@@ -33,13 +33,13 @@
     - [ ] Implement the high-density grid with refined Zone Cards
 - [x] Task: Conductor - User Manual Verification 'Phase 4: Operations Center (Dashboard) Transformation' (Protocol in workflow.md)
 
-## Phase 5: Inspection Records (Zone Detail) Overhaul
+## Phase 5: Inspection Records (Zone Detail) Overhaul [checkpoint: 5d3ff84]
 - [x] Task: Implement Drag-and-Drop Upload [ab46fee]
     - [ ] Write integration tests for the new upload interaction
     - [ ] Build the modern drag-and-drop zone with real-time feedback
 - [x] Task: Modernize Photo Comparison View [ab46fee]
     - [ ] Implement the side-by-side comparison layout optimized for mobile field review
-- [ ] Task: Conductor - User Manual Verification 'Phase 5: Inspection Records (Zone Detail) Overhaul' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 5: Inspection Records (Zone Detail) Overhaul' (Protocol in workflow.md)
 
 ## Phase 6: Field Optimization & Final Polish
 - [ ] Task: Mobile Touch Target & Visibility Audit
