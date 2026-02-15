@@ -6,7 +6,7 @@
 - [x] Task: Install and Configure Tailwind CSS [1dafa5f]
     - [ ] Install dependencies and initialize `tailwind.config.js`
     - [ ] Configure `app/globals.css` with Tailwind directives
-- [ ] Task: Setup Shadcn/UI and Dark Mode
+- [x] Task: Setup Shadcn/UI and Dark Mode [942aa29]
     - [ ] Initialize Shadcn/UI and install the Theme Provider
     - [ ] Implement the Dark Mode toggle in the layout
 - [ ] Task: Conductor - User Manual Verification 'Phase 1: Infrastructure & Core Theme' (Protocol in workflow.md)
