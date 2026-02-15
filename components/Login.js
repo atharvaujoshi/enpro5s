@@ -87,7 +87,7 @@ export default function Login() {
                 </motion.div>
               )}
 
-              <div className="space-y-2">
+              <div className="space-y-2 text-center">
                 <Label htmlFor="email">Email Address</Label>
                 <div className="relative">
                   <Mail size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -98,12 +98,12 @@ export default function Login() {
                     value={credentials.email}
                     onChange={(e) => setCredentials(prev => ({...prev, email: e.target.value}))}
                     required
-                    className="pl-11 h-12 bg-white/50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 rounded-xl focus-visible:ring-primary"
+                    className="pl-11 h-12 bg-white/50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 rounded-xl focus-visible:ring-primary text-center"
                   />
                 </div>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-2 text-center">
                 <Label htmlFor="password">Password</Label>
                 <div className="relative">
                   <Lock size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -114,19 +114,19 @@ export default function Login() {
                     value={credentials.password}
                     onChange={(e) => setCredentials(prev => ({...prev, password: e.target.value}))}
                     required
-                    className="pl-11 h-12 bg-white/50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 rounded-xl focus-visible:ring-primary"
+                    className="pl-11 h-12 bg-white/50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 rounded-xl focus-visible:ring-primary text-center"
                   />
                 </div>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-2 text-center">
                 <Label htmlFor="role">Select Role</Label>
                 <Select 
                   value={credentials.role} 
                   onValueChange={(v) => setCredentials(prev => ({...prev, role: v}))}
                 >
                   <SelectTrigger id="role" className="h-12 bg-white/50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 rounded-xl focus:ring-primary">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center justify-center gap-3 w-full">
                       <User size={18} className="text-slate-400" />
                       <SelectValue placeholder="Choose role..." />
                     </div>
