@@ -1,18 +1,9 @@
 
 import { MongoClient, ObjectId } from 'mongodb'
-import nodemailer from 'nodemailer'
+import { sendDecisionNotification } from '../../../../../lib/notifications'
+import { getManagerEmailForZone } from '../../../../../lib/users'
 
 const uri = process.env.MONGODB_URI
-
-const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST,
-  port: process.env.EMAIL_PORT,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
-})
 
 export async function POST(request, { params }) {
   try {
@@ -63,18 +54,8 @@ export async function POST(request, { params }) {
 
     // Send email notification to zone manager
     try {
-      await transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: process.env.EMAIL_TO,
-        subject: `Work ${approved ? 'Approved' : 'Rejected'} - Zone ${zoneId}`,
-        html: `
-          <h2>Work ${approved ? 'Approved' : 'Rejected'}</h2>
-          <p><strong>Zone:</strong> ${zoneId}</p>
-          <p><strong>Status:</strong> ${status}</p>
-          <p><strong>Comment:</strong> ${comment || 'No comment provided'}</p>
-          <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
-        `
-      })
+      const managerEmail = await getManagerEmailForZone(zoneId);
+      await sendDecisionNotification(zone.name || `Zone ${zoneId}`, workId, status, comment, managerEmail);
     } catch (emailError) {
       console.error('Email notification failed:', emailError)
     }

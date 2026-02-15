@@ -6,7 +6,12 @@ import { v4 as uuidv4 } from 'uuid'
 import { Jimp } from 'jimp'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '../auth/[...nextauth]/route'
-import { sendUploadNotification, sendCompletionNotification } from '../../../lib/notifications'
+import { 
+  sendUploadNotification, 
+  sendCompletionNotification, 
+  getCEOEmail
+} from '../../../lib/notifications'
+import { getManagerEmailForZone } from '../../../lib/users'
 
 const uri = process.env.MONGODB_URI
 
@@ -148,7 +153,8 @@ export async function POST(request) {
       // Trigger notification for 'before' upload
       try {
         const zone = await db.collection('zones').findOne({ id: zoneId }, { projection: { name: 1 } })
-        await sendUploadNotification(zone?.name || `Zone ${zoneId}`, 'before', workId)
+        const managerEmail = await getManagerEmailForZone(zoneId);
+        await sendUploadNotification(zone?.name || `Zone ${zoneId}`, 'before', workId, managerEmail)
       } catch (notifyError) {
         console.error('Notification error (non-blocking):', notifyError)
       }
@@ -206,10 +212,11 @@ export async function POST(request) {
         )
         if (updatedZone && updatedZone.workRecords?.[0]) {
           const zoneName = updatedZone.name || `Zone ${zoneId}`;
+          const ceoEmail = getCEOEmail();
           // Send notification that 'after' photo was uploaded
-          await sendUploadNotification(zoneName, 'after', targetWorkId);
+          await sendUploadNotification(zoneName, 'after', targetWorkId, ceoEmail);
           // Send summary notification for completion
-          await sendCompletionNotification(zoneName, updatedZone.workRecords[0]);
+          await sendCompletionNotification(zoneName, updatedZone.workRecords[0], ceoEmail);
         }
       } catch (notifyError) {
         console.error('Notification error (non-blocking):', notifyError)
