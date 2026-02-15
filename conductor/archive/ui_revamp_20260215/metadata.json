@@ -1,0 +1,8 @@
+{
+  "track_id": "ui_revamp_20260215",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-02-15T16:35:00Z",
+  "updated_at": "2026-02-15T16:35:00Z",
+  "description": "Revamp full UI to be modern, user-friendly, and industrial-ready using Tailwind and Shadcn."
+}
