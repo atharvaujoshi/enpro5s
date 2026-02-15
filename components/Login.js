@@ -1,9 +1,27 @@
-
-'use client'
+"use client"
 
 import { useState } from 'react'
 import { signIn } from 'next-auth/react'
+import { motion } from 'framer-motion'
 import { ShieldCheck, Mail, Lock, User, LogIn, Loader2, AlertCircle } from 'lucide-react'
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 
 export default function Login() {
   const [credentials, setCredentials] = useState({
@@ -38,182 +56,137 @@ export default function Login() {
   }
 
   return (
-    <div className="login-container-premium">
-      <div className="login-box">
-        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-          <div style={{ 
-            display: 'inline-flex', 
-            alignItems: 'center', 
-            justifyContent: 'center', 
-            padding: '12px', 
-            background: '#EEF2FF', 
-            borderRadius: '16px', 
-            color: '#4F46E5',
-            marginBottom: '16px'
-          }}>
-            <ShieldCheck size={40} />
-          </div>
-          <h2 style={{ fontSize: '1.75rem', fontWeight: '800', color: '#1F2937', marginBottom: '8px' }}>
-            ZoneTracker
-          </h2>
-          <p style={{ color: '#6B7280', fontSize: '1rem' }}>
-            Secure Industrial Zone Management
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit}>
-          {error && (
-            <div style={{ 
-              background: '#FEF2F2', 
-              border: '1px solid #FECACA', 
-              color: '#991B1B', 
-              padding: '12px', 
-              borderRadius: '8px', 
-              marginBottom: '24px', 
-              display: 'flex', 
-              alignItems: 'center', 
-              gap: '8px',
-              fontSize: '0.875rem'
-            }}>
-              <AlertCircle size={18} />
-              <span>{error}</span>
+    <div className="login-container-premium bg-slate-50 dark:bg-slate-950">
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.3 }}
+        className="w-full max-w-md p-4"
+      >
+        <Card className="glass-card border-none shadow-2xl overflow-hidden">
+          <CardHeader className="text-center pt-8 pb-6">
+            <div className="mx-auto w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-4 ring-8 ring-primary/5">
+              <ShieldCheck size={40} />
             </div>
-          )}
+            <CardTitle className="text-3xl font-black tracking-tight">ZoneTracker</CardTitle>
+            <CardDescription className="text-slate-500 dark:text-slate-400 font-medium">
+              Secure Industrial Zone Management
+            </CardDescription>
+          </CardHeader>
+          
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {error && (
+                <motion.div 
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/30 text-red-600 dark:text-red-400 p-3 rounded-xl flex items-center gap-3 text-sm font-medium"
+                >
+                  <AlertCircle size={18} />
+                  <span>{error}</span>
+                </motion.div>
+              )}
 
-          <div style={{ marginBottom: '20px' }}>
-            <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '8px' }}>
-              Email Address
-            </label>
-            <div style={{ position: 'relative' }}>
-              <Mail size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#9CA3AF' }} />
-              <input
-                type="email"
-                placeholder="name@company.com"
-                value={credentials.email}
-                onChange={(e) => setCredentials(prev => ({...prev, email: e.target.value}))}
-                required
-                style={{ 
-                  width: '100%', 
-                  padding: '10px 12px 10px 40px', 
-                  border: '1px solid #D1D5DB', 
-                  borderRadius: '8px', 
-                  outline: 'none',
-                  fontSize: '0.95rem',
-                  transition: 'border-color 0.2s'
-                }}
-                className="input-focus-ring"
-              />
-            </div>
-          </div>
+              <div className="space-y-2">
+                <Label htmlFor="email">Email Address</Label>
+                <div className="relative">
+                  <Mail size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="name@company.com"
+                    value={credentials.email}
+                    onChange={(e) => setCredentials(prev => ({...prev, email: e.target.value}))}
+                    required
+                    className="pl-11 h-12 bg-white/50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 rounded-xl focus-visible:ring-primary"
+                  />
+                </div>
+              </div>
 
-          <div style={{ marginBottom: '20px' }}>
-            <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '8px' }}>
-              Password
-            </label>
-            <div style={{ position: 'relative' }}>
-              <Lock size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#9CA3AF' }} />
-              <input
-                type="password"
-                placeholder="••••••••"
-                value={credentials.password}
-                onChange={(e) => setCredentials(prev => ({...prev, password: e.target.value}))}
-                required
-                style={{ 
-                  width: '100%', 
-                  padding: '10px 12px 10px 40px', 
-                  border: '1px solid #D1D5DB', 
-                  borderRadius: '8px', 
-                  outline: 'none',
-                  fontSize: '0.95rem',
-                  transition: 'border-color 0.2s'
-                }}
-              />
-            </div>
-          </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <div className="relative">
+                  <Lock size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="••••••••"
+                    value={credentials.password}
+                    onChange={(e) => setCredentials(prev => ({...prev, password: e.target.value}))}
+                    required
+                    className="pl-11 h-12 bg-white/50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 rounded-xl focus-visible:ring-primary"
+                  />
+                </div>
+              </div>
 
-          <div style={{ marginBottom: '32px' }}>
-            <label style={{ display: 'block', fontSize: '0.875rem', fontWeight: '600', color: '#374151', marginBottom: '8px' }}>
-              Select Role
-            </label>
-            <div style={{ position: 'relative' }}>
-              <User size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#9CA3AF' }} />
-              <select
-                value={credentials.role}
-                onChange={(e) => setCredentials(prev => ({...prev, role: e.target.value}))}
-                style={{ 
-                  width: '100%', 
-                  padding: '10px 12px 10px 40px', 
-                  border: '1px solid #D1D5DB', 
-                  borderRadius: '8px', 
-                  outline: 'none',
-                  fontSize: '0.95rem',
-                  backgroundColor: 'white',
-                  cursor: 'pointer'
-                }}
+              <div className="space-y-2">
+                <Label htmlFor="role">Select Role</Label>
+                <Select 
+                  value={credentials.role} 
+                  onValueChange={(v) => setCredentials(prev => ({...prev, role: v}))}
+                >
+                  <SelectTrigger id="role" className="h-12 bg-white/50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 rounded-xl focus:ring-primary">
+                    <div className="flex items-center gap-3">
+                      <User size={18} className="text-slate-400" />
+                      <SelectValue placeholder="Choose role..." />
+                    </div>
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl border-slate-200 dark:border-slate-800 shadow-xl">
+                    <SelectItem value="user" className="rounded-lg">User</SelectItem>
+                    <SelectItem value="zone_manager" className="rounded-lg">Zone Manager</SelectItem>
+                    <SelectItem value="ceo" className="rounded-lg">CEO</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <Button 
+                type="submit" 
+                className="w-full h-12 rounded-xl text-md font-bold shadow-lg shadow-primary/20 transition-all active:scale-[0.98]" 
+                disabled={loading}
               >
-                <option value="user">User</option>
-                <option value="zone_manager">Zone Manager</option>
-                <option value="ceo">CEO</option>
-              </select>
-            </div>
-          </div>
+                {loading ? (
+                  <>
+                    <Loader2 size={20} className="mr-2 animate-spin" />
+                    Signing In...
+                  </>
+                ) : (
+                  <>
+                    <LogIn size={20} className="mr-2" />
+                    Sign In
+                  </>
+                )}
+              </Button>
+            </form>
+          </CardContent>
 
-          <button 
-            type="submit" 
-            className="btn btn-primary" 
-            disabled={loading}
-            style={{ width: '100%', justifyContent: 'center', padding: '12px', fontSize: '1rem' }}
-          >
-            {loading ? (
-              <>
-                <Loader2 size={20} className="animate-spin" />
-                Signing In...
-              </>
-            ) : (
-              <>
-                <LogIn size={20} />
-                Sign In
-              </>
-            )}
-          </button>
-        </form>
-
-        <div style={{ 
-          marginTop: '32px', 
-          padding: '20px', 
-          background: '#F9FAFB', 
-          borderRadius: '12px', 
-          border: '1px dashed #D1D5DB' 
-        }}>
-          <h3 style={{ 
-            fontSize: '0.75rem', 
-            textTransform: 'uppercase', 
-            color: '#6B7280', 
-            letterSpacing: '0.05em', 
-            fontWeight: '700', 
-            marginBottom: '12px' 
-          }}>
-            Demo Access
-          </h3>
-          <div style={{ display: 'grid', gap: '8px', fontSize: '0.875rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#4B5563' }}>
-              <span>CEO</span>
-              <span style={{ fontFamily: 'monospace', background: '#E5E7EB', padding: '2px 6px', borderRadius: '4px' }}>ceo@company.com</span>
+          <CardFooter className="flex flex-col gap-4 pb-8">
+            <div className="w-full h-px bg-slate-100 dark:bg-slate-800" />
+            <div className="w-full space-y-3 bg-slate-50/50 dark:bg-slate-900/30 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
+              <h3 className="text-[10px] uppercase font-black tracking-widest text-slate-400 flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                Demo Access
+              </h3>
+              <div className="grid gap-2 text-xs font-medium">
+                {[
+                  { role: 'CEO', email: 'atharva.jjoshi20@gmail.com' },
+                  { role: 'Manager', email: 'atharvaujoshi@gmail.com' },
+                  { role: 'User', email: 'spydarr1106@gmail.com' }
+                ].map((item) => (
+                  <div key={item.role} className="flex justify-between items-center group">
+                    <span className="text-slate-500 dark:text-slate-400">{item.role}</span>
+                    <code className="bg-white dark:bg-slate-800 px-2 py-1 rounded-md border border-slate-200 dark:border-slate-700 text-primary group-hover:border-primary/50 transition-colors">
+                      {item.email}
+                    </code>
+                  </div>
+                ))}
+              </div>
+              <p className="text-[10px] text-center text-slate-400 pt-1">
+                Default password: <strong>password</strong>
+              </p>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#4B5563' }}>
-              <span>Manager</span>
-              <span style={{ fontFamily: 'monospace', background: '#E5E7EB', padding: '2px 6px', borderRadius: '4px' }}>manager1@company.com</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#4B5563' }}>
-              <span>User</span>
-              <span style={{ fontFamily: 'monospace', background: '#E5E7EB', padding: '2px 6px', borderRadius: '4px' }}>user@company.com</span>
-            </div>
-          </div>
-          <div style={{ marginTop: '12px', textAlign: 'center', fontSize: '0.8rem', color: '#6B7280' }}>
-            Password: <strong>password</strong>
-          </div>
-        </div>
-      </div>
+          </CardFooter>
+        </Card>
+      </motion.div>
     </div>
   )
 }
