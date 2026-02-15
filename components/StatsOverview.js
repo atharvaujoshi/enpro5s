@@ -66,9 +66,9 @@ export function StatsOverview({ stats }) {
       animate="show"
       className="space-y-8"
     >
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="flex flex-col items-center gap-4 text-center">
         <div>
-          <h2 className="text-2xl font-black tracking-tight flex items-center gap-3">
+          <h2 className="text-2xl font-black tracking-tight flex items-center justify-center gap-3">
             <TrendingUp className="text-primary h-6 w-6" />
             Global Project Status
           </h2>
@@ -81,9 +81,9 @@ export function StatsOverview({ stats }) {
         <div className="xl:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6">
           {Object.entries(stats).map(([type, counts]) => (
             <motion.div key={type} variants={itemVariants}>
-              <Card className="glass-card h-full border-none shadow-sm overflow-hidden">
-                <CardHeader className="pb-4">
-                  <div className="flex items-center gap-3">
+              <Card className="glass-card h-full border-none shadow-sm overflow-hidden flex flex-col items-center text-center">
+                <CardHeader className="pb-4 flex flex-col items-center">
+                  <div className="flex flex-col items-center gap-3">
                     <div className="p-2 bg-indigo-50 dark:bg-indigo-900/30 text-primary rounded-lg">
                       <Building size={20} />
                     </div>
@@ -93,7 +93,7 @@ export function StatsOverview({ stats }) {
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="w-full">
                   <div className="grid grid-cols-3 gap-2">
                     <div className="text-center p-3 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-100 dark:border-amber-900/30">
                       <div className="text-xl font-black text-amber-700 dark:text-amber-400">{counts.pending}</div>

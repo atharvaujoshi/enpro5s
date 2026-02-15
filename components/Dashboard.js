@@ -102,7 +102,7 @@ export default function Dashboard() {
         <motion.div 
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="space-y-2"
+          className="space-y-2 text-center"
         >
           <h1 className="text-4xl font-black tracking-tight text-slate-900 dark:text-white">
             Operations Center
@@ -119,13 +119,13 @@ export default function Dashboard() {
 
         {/* Zone Management Section */}
         <div className="space-y-8">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-            <h2 className="text-2xl font-black tracking-tight flex items-center gap-3">
+          <div className="flex flex-col items-center gap-6">
+            <h2 className="text-2xl font-black tracking-tight flex items-center gap-3 justify-center">
               <Activity className="text-primary h-6 w-6" />
               Managed Zones
             </h2>
             
-            <div className="bg-white dark:bg-slate-900 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm inline-flex gap-1">
+            <div className="bg-white dark:bg-slate-900 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-wrap justify-center gap-1 w-full sm:w-auto">
               {[
                 { id: 'unsolved', label: 'Unsolved', icon: AlertCircle },
                 { id: 'complete', label: 'Completed', icon: CheckCircle2 },
@@ -135,7 +135,7 @@ export default function Dashboard() {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
                   className={cn(
-                    "flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all",
+                    "flex-1 sm:flex-initial flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all",
                     activeTab === tab.id 
                       ? "bg-primary text-white shadow-lg shadow-primary/20" 
                       : "text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
@@ -165,9 +165,9 @@ export default function Dashboard() {
                   {zones.map((zone) => (
                     <motion.div key={zone.id} variants={itemVariants}>
                       <Link href={`/zones/${zone.id}`} className="block group h-full">
-                        <Card className="glass-card h-full border-none group-hover:ring-2 group-hover:ring-primary/50 transition-all flex flex-col">
-                          <CardHeader className="pb-4">
-                            <div className="flex justify-between items-start">
+                        <Card className="glass-card h-full border-none group-hover:ring-2 group-hover:ring-primary/50 transition-all flex flex-col items-center text-center">
+                          <CardHeader className="pb-4 flex flex-col items-center">
+                            <div className="flex flex-col items-center gap-4">
                               <div className="p-3 bg-slate-100 dark:bg-slate-800 rounded-2xl text-slate-600 dark:text-slate-400 group-hover:bg-primary group-hover:text-white transition-colors shadow-inner">
                                 <MapPin size={20} />
                               </div>
@@ -182,12 +182,12 @@ export default function Dashboard() {
                             <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Main Industrial Sector</p>
                           </CardContent>
                           
-                          <CardFooter className="pt-0 pb-6 flex items-center justify-between">
-                            <div className="flex flex-col">
+                          <CardFooter className="pt-0 pb-6 flex flex-col items-center gap-4 w-full">
+                            <div className="flex flex-col items-center">
                               <span className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">Active Tasks</span>
                               <span className="text-lg font-black leading-none">{zone.workCount || 0}</span>
                             </div>
-                            <div className="flex flex-col items-end">
+                            <div className="flex flex-col items-center">
                               <span className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">Last Action</span>
                               <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300 font-bold text-xs leading-none">
                                 <Clock size={12} className="text-slate-400" />
