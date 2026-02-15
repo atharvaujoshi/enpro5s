@@ -149,8 +149,8 @@ export default function ZonePage() {
 
       <main className="flex-1 container py-12 space-y-10">
         {/* Breadcrumbs & Title */}
-        <div className="flex flex-col md:flex-row justify-between items-end gap-6">
-          <div className="space-y-2">
+        <div className="flex flex-col items-center gap-6 text-center">
+          <div className="space-y-2 flex flex-col items-center">
             <div className="flex items-center gap-2 text-sm font-bold text-slate-400 uppercase tracking-tighter">
               <span>Operations</span>
               <ChevronRight size={14} />
@@ -162,7 +162,7 @@ export default function ZonePage() {
           {session?.user?.role !== 'ceo' && (
             <Button 
               size="lg" 
-              className="rounded-2xl h-14 px-8 font-bold shadow-lg shadow-primary/20 transition-all active:scale-95"
+              className="w-full sm:w-auto rounded-2xl h-14 px-8 font-bold shadow-lg shadow-primary/20 transition-all active:scale-95"
               onClick={() => setShowUploadForm(!showUploadForm)}
             >
               {showUploadForm ? <XSquare className="mr-2 h-5 w-5" /> : <Plus className="mr-2 h-5 w-5" />}
@@ -182,9 +182,9 @@ export default function ZonePage() {
             >
               <Card className="glass-card border-none shadow-xl">
                 <CardContent className="p-8 md:p-12">
-                  <div className="max-w-3xl mx-auto space-y-8">
+                  <div className="max-w-3xl mx-auto space-y-8 text-center">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                      <div className="space-y-4">
+                      <div className="space-y-4 flex flex-col items-center">
                         <Label className="text-xs font-black uppercase tracking-widest text-slate-400">1. Select Protocol</Label>
                         <Tabs value={selectedWorkType} onValueChange={setSelectedWorkType} className="w-full">
                           <TabsList className="grid grid-cols-3 h-14 bg-slate-100 dark:bg-slate-800 rounded-2xl p-1.5">
@@ -195,9 +195,9 @@ export default function ZonePage() {
                         </Tabs>
                       </div>
 
-                      <div className="space-y-4">
+                      <div className="space-y-4 flex flex-col items-center">
                         <Label className="text-xs font-black uppercase tracking-widest text-slate-400">2. Record Phase</Label>
-                        <div className="flex gap-2 p-1.5 bg-slate-100 dark:bg-slate-800 rounded-2xl h-14">
+                        <div className="flex gap-2 p-1.5 bg-slate-100 dark:bg-slate-800 rounded-2xl h-14 w-full">
                           {session?.user?.role !== 'zone_manager' && (
                             <button 
                               className={cn(
@@ -223,10 +223,10 @@ export default function ZonePage() {
                     </div>
 
                     {photoType === 'after' && (
-                      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+                      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4 flex flex-col items-center">
                         <Label htmlFor="active-task" className="text-xs font-black uppercase tracking-widest text-slate-400">3. Link to Active Task</Label>
                         <Select value={selectedWorkId} onValueChange={setSelectedWorkId}>
-                          <SelectTrigger id="active-task" className="h-14 rounded-2xl bg-white/50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800">
+                          <SelectTrigger id="active-task" className="h-14 rounded-2xl bg-white/50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 w-full">
                             <SelectValue placeholder="Identify work record..." />
                           </SelectTrigger>
                           <SelectContent className="rounded-2xl border-slate-200 dark:border-slate-800">
@@ -246,7 +246,7 @@ export default function ZonePage() {
                       </motion.div>
                     )}
 
-                    <div className="space-y-4">
+                    <div className="space-y-4 flex flex-col items-center">
                       <Label className="text-xs font-black uppercase tracking-widest text-slate-400">
                         {photoType === 'after' ? '4.' : '3.'} Documentation Evidence
                       </Label>
@@ -275,8 +275,8 @@ export default function ZonePage() {
                     </div>
 
                     {previewUrl && (
-                      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="space-y-6">
-                        <div className="relative rounded-[32px] overflow-hidden border-4 border-white dark:border-slate-800 shadow-2xl">
+                      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="space-y-6 flex flex-col items-center">
+                        <div className="relative rounded-[32px] overflow-hidden border-4 border-white dark:border-slate-800 shadow-2xl w-full max-w-lg mx-auto">
                           <img src={previewUrl} className="w-full max-h-[400px] object-cover" />
                           <div className="absolute top-4 right-4">
                             <Badge className="bg-white/90 dark:bg-slate-950/90 text-primary backdrop-blur-md border-none font-black">PREVIEW</Badge>
@@ -316,10 +316,10 @@ export default function ZonePage() {
               animate={{ opacity: 1, y: 0 }} 
               transition={{ delay: idx * 0.05 }} 
               key={work._id} 
-              className="work-record overflow-hidden"
+              className="work-record overflow-hidden flex flex-col items-center text-center"
             >
-              <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-10 pb-6 border-b border-slate-100 dark:border-slate-800">
-                <div className="flex flex-wrap items-center gap-4">
+              <div className="flex flex-col justify-center items-center gap-6 mb-10 pb-6 border-b border-slate-100 dark:border-slate-800 w-full">
+                <div className="flex flex-col items-center gap-4">
                   <span className="text-3xl font-black text-primary">{work.workType}</span>
                   <span className="font-mono text-sm font-bold bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-xl">#{work._id.slice(-8).toUpperCase()}</span>
                   {work.status === 'complete' ? (
@@ -329,14 +329,14 @@ export default function ZonePage() {
                   )}
                 </div>
                 
-                <div className="flex flex-wrap items-center gap-4">
+                <div className="flex flex-col items-center gap-4 w-full sm:w-auto">
                   {session?.user?.role === 'ceo' && work.status !== 'complete' && (
-                    <Button variant="outline" className="rounded-xl border-slate-200 dark:border-slate-800 hover:bg-rose-50 hover:text-rose-600 font-bold" onClick={() => pingManager(work._id)}>
+                    <Button variant="outline" className="w-full rounded-xl border-slate-200 dark:border-slate-800 hover:bg-rose-50 hover:text-rose-600 font-bold" onClick={() => pingManager(work._id)}>
                       <Bell size={16} className="mr-2" /> Urgent Ping
                     </Button>
                   )}
                   <div className={cn(
-                    "flex items-center gap-3 px-5 py-2.5 rounded-2xl font-black text-sm shadow-inner",
+                    "flex items-center justify-center gap-3 px-5 py-2.5 rounded-2xl font-black text-sm shadow-inner w-full",
                     moment() > moment(work.deadline) ? "bg-rose-50 text-rose-600" : "bg-slate-100 dark:bg-slate-800 text-slate-500"
                   )}>
                     <Clock size={16} /> 
@@ -345,17 +345,17 @@ export default function ZonePage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                <div className="space-y-6">
-                  <h4 className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10 w-full">
+                <div className="space-y-6 flex flex-col items-center">
+                  <h4 className="flex items-center justify-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
                     <div className="w-2 h-2 rounded-full bg-primary" /> 
                     Initial Baseline (Before)
                   </h4>
-                  <div className="grid grid-cols-1 gap-4">
+                  <div className="grid grid-cols-1 gap-4 w-full">
                     {work.beforePhotos.map(p => (
-                      <div key={p._id} className="photo-card group">
+                      <div key={p._id} className="photo-card group max-w-lg mx-auto">
                         <img src={p.url} className="w-full aspect-[4/3] object-cover transition-transform duration-500 group-hover:scale-105" />
-                        <div className="photo-overlay">
+                        <div className="photo-overlay text-center">
                           <Activity size={12} className="inline mr-2" />
                           {moment(p.timestamp).format('DD MMM YYYY, HH:mm')}
                         </div>
@@ -364,24 +364,24 @@ export default function ZonePage() {
                   </div>
                 </div>
 
-                <div className="space-y-6">
-                  <h4 className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                <div className="space-y-6 flex flex-col items-center">
+                  <h4 className="flex items-center justify-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
                     <div className="w-2 h-2 rounded-full bg-emerald-500" /> 
                     Final Execution (After)
                   </h4>
-                  <div className="grid grid-cols-1 gap-4">
+                  <div className="grid grid-cols-1 gap-4 w-full">
                     {work.afterPhotos.length > 0 ? (
                       work.afterPhotos.map(p => (
-                        <div key={p._id} className="photo-card group">
+                        <div key={p._id} className="photo-card group max-w-lg mx-auto">
                           <img src={p.url} className="w-full aspect-[4/3] object-cover transition-transform duration-500 group-hover:scale-105" />
-                          <div className="photo-overlay">
+                          <div className="photo-overlay text-center">
                             <CheckCircle2 size={12} className="inline mr-2 text-emerald-400" />
                             {moment(p.timestamp).format('DD MMM YYYY, HH:mm')}
                           </div>
                         </div>
                       ))
                     ) : (
-                      <div className="aspect-[4/3] rounded-[32px] bg-slate-50 dark:bg-slate-900/50 border-4 border-dashed border-slate-100 dark:border-slate-800 flex flex-col items-center justify-center text-slate-400 space-y-4">
+                      <div className="aspect-[4/3] rounded-[32px] bg-slate-50 dark:bg-slate-900/50 border-4 border-dashed border-slate-100 dark:border-slate-800 flex flex-col items-center justify-center text-slate-400 space-y-4 max-w-lg mx-auto w-full">
                         <ImageIcon size={48} className="opacity-20" />
                         <p className="text-xs font-black uppercase tracking-widest opacity-50">Awaiting Evidence</p>
                       </div>
@@ -391,8 +391,8 @@ export default function ZonePage() {
               </div>
 
               {session?.user?.role === 'ceo' && work.status === 'inprogress' && (
-                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mt-12 p-8 bg-indigo-50/50 dark:bg-indigo-900/10 rounded-[32px] border border-indigo-100 dark:border-indigo-900/20">
-                  <div className="flex items-center gap-3 mb-6">
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mt-12 p-8 bg-indigo-50/50 dark:bg-indigo-900/10 rounded-[32px] border border-indigo-100 dark:border-indigo-900/20 w-full max-w-2xl mx-auto">
+                  <div className="flex items-center justify-center gap-3 mb-6">
                     <div className="p-2 bg-indigo-600 text-white rounded-xl">
                       <ShieldCheck size={20} />
                     </div>
@@ -404,7 +404,7 @@ export default function ZonePage() {
                       placeholder="Enter detailed review notes or reason for rejection..." 
                       value={approvalComment} 
                       onChange={(e) => setApprovalComment(e.target.value)} 
-                      className="min-h-[120px] rounded-2xl bg-white dark:bg-slate-900 border-indigo-100 dark:border-indigo-900/30 focus-visible:ring-indigo-600"
+                      className="min-h-[120px] rounded-2xl bg-white dark:bg-slate-900 border-indigo-100 dark:border-indigo-900/30 focus-visible:ring-indigo-600 text-center"
                     />
                     
                     <div className="flex flex-col sm:flex-row gap-4">
