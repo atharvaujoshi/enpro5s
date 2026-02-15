@@ -10,10 +10,12 @@
 - [ ] Task: Conductor - User Manual Verification 'Phase 1: Environment and Core Setup' (Protocol in workflow.md)
 
 ## Phase 2: Integration and Logic
-- [ ] Task: Implement Email Trigger Logic
-    - [ ] Write failing tests for the email trigger in the upload API
-    - [ ] Integrate the email sending logic into the `api/upload` route (triggered on 'Complete' status)
-    - [ ] Implement error handling and logging for the email sending process
+- [x] Task: Create Notification Utility [2785d8b]
+    - [ ] Write tests for the notification logic (checking completion and triggering email)
+    - [ ] Implement `lib/notifications.js` to handle email triggers
+- [ ] Task: Integrate Notification Utility into Upload API
+    - [ ] Update `api/upload` route to call the notification utility
+    - [ ] Implement error handling and logging for the notification process
 - [ ] Task: Conductor - User Manual Verification 'Phase 2: Integration and Logic' (Protocol in workflow.md)
 
 ## Phase 3: Verification and Finalization
