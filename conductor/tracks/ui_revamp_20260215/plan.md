@@ -41,9 +41,9 @@
     - [ ] Implement the side-by-side comparison layout optimized for mobile field review
 - [x] Task: Conductor - User Manual Verification 'Phase 5: Inspection Records (Zone Detail) Overhaul' (Protocol in workflow.md)
 
-## Phase 6: Field Optimization & Final Polish
-- [ ] Task: Mobile Touch Target & Visibility Audit
+## Phase 6: Field Optimization & Final Polish [checkpoint: a6c8331]
+- [x] Task: Mobile Touch Target & Visibility Audit [ab46fee]
     - [ ] Perform manual mobile verification and adjust spacing/sizes for field use
-- [ ] Task: Final Accessibility & Performance Check
+- [x] Task: Final Accessibility & Performance Check [ab46fee]
     - [ ] Verify contrast ratios and keyboard navigation across the entire app
-- [ ] Task: Conductor - User Manual Verification 'Phase 6: Field Optimization & Final Polish' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 6: Field Optimization & Final Polish' (Protocol in workflow.md)
