@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { Jimp } from 'jimp'
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '../auth/[...nextauth]/route'
+import { sendCompletionEmailIfFinished } from '../../../lib/notifications'
 
 const uri = process.env.MONGODB_URI
 
@@ -187,6 +188,19 @@ export async function POST(request) {
       if (result.matchedCount === 0) {
         await client.close()
         return Response.json({ error: 'Work record not found' }, { status: 404 })
+      }
+
+      // Trigger email notification if documentation is complete
+      try {
+        const updatedZone = await db.collection('zones').findOne(
+          { id: zoneId, "workRecords._id": targetWorkId },
+          { projection: { name: 1, "workRecords.$": 1 } }
+        )
+        if (updatedZone && updatedZone.workRecords?.[0]) {
+          await sendCompletionEmailIfFinished(updatedZone.name || `Zone ${zoneId}`, updatedZone.workRecords[0])
+        }
+      } catch (notifyError) {
+        console.error('Notification error (non-blocking):', notifyError)
       }
     }
 
